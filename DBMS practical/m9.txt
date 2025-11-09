@@ -1,0 +1,77 @@
+CREATE TABLE CUSTOMERS (
+    CNo INT PRIMARY KEY,
+    Cname VARCHAR(50) NOT NULL,
+    Ccity VARCHAR(50),
+    CMobile VARCHAR(15) UNIQUE
+);
+
+CREATE TABLE ITEMS (
+    INo INT PRIMARY KEY,
+    Iname VARCHAR(50) NOT NULL,
+    Itype VARCHAR(30) CHECK (Itype IN ('Stationary', 'Electronics', 'Grocery', 'Furniture')),
+    Iprice DECIMAL(10,2) CHECK (Iprice >= 0),
+    Icount INT CHECK (Icount >= 0)
+);
+
+CREATE TABLE PURCHASE (
+    PNo INT PRIMARY KEY,
+    Pdate DATE NOT NULL,
+    Pquantity INT CHECK (Pquantity > 0),
+    Cno INT,
+    INo INT,
+    FOREIGN KEY (Cno) REFERENCES CUSTOMERS(CNo),
+    FOREIGN KEY (INo) REFERENCES ITEMS(INo)
+);
+
+INSERT INTO CUSTOMERS VALUES
+(101, 'Maya', 'Pune', '9876543210'),
+(102, 'Gopal', 'Mumbai', '9998887776'),
+(103, 'Riya', 'Pune', '8887776665'),
+(104, 'Amit', 'Delhi', '7776665554');
+
+INSERT INTO ITEMS VALUES
+(1, 'Pen', 'Stationary', 500, 100),
+(2, 'Notebook', 'Stationary', 800, 50),
+(3, 'Mouse', 'Electronics', 1200, 30),
+(4, 'Chair', 'Furniture', 1500, 20),
+(5, 'Pencil', 'Stationary', 50, 200);
+
+INSERT INTO PURCHASE VALUES
+(1001, '2024-11-05', 5, 101, 1),
+(1002, '2024-11-06', 3, 102, 2),
+(1003, '2024-11-03', 2, 103, 3),
+(1004, '2024-11-07', 10, 101, 5),
+(1005, '2024-11-01', 1, 104, 4);
+
+SELECT Iname, Iprice
+FROM ITEMS
+WHERE Itype = 'Stationary' AND Iprice BETWEEN 400 AND 1000;
+
+UPDATE CUSTOMERS
+SET CMobile = '9876501234'
+WHERE Cname = 'Gopal';
+SELECT * FROM CUSTOMERS WHERE Cname = 'Gopal';
+
+SELECT Iname, Iprice
+FROM ITEMS
+WHERE Iprice = (SELECT MAX(Iprice) FROM ITEMS);
+
+SELECT * FROM PURCHASE
+ORDER BY Pdate DESC;
+
+SELECT Ccity, COUNT(*) AS Total_Customers
+FROM CUSTOMERS
+GROUP BY Ccity;
+
+SELECT c.Cname, i.Iname, p.Pquantity
+FROM PURCHASE p
+JOIN CUSTOMERS c ON p.Cno = c.CNo
+JOIN ITEMS i ON p.INo = i.INo
+WHERE c.Cname = 'Maya';
+
+CREATE VIEW Stationary_View AS
+SELECT Iname, Iprice, Icount
+FROM ITEMS
+WHERE Itype = 'Stationary'
+ORDER BY Iprice DESC;
+SELECT * FROM Stationary_View;

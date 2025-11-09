@@ -1,0 +1,32 @@
+-- exception handling example 1 : division by zero
+set serveroutput on;
+declare
+    a number := 10;
+    b number := 0;
+    c number;
+begin
+    c := a / b;
+    dbms_output.put_line('Result is: ' || c);
+exception
+    when zero_divide then
+        dbms_output.put_line('Error: Division by zero not allowed.');
+    when others then
+        dbms_output.put_line('Some other error occurred.');
+end;
+/
+-- exception handling example 2 : duplicate record insert
+create table student (
+    roll number primary key,
+    name varchar2(30)
+);
+begin
+    insert into student values (1, 'Amit');
+    insert into student values (1, 'Pooja');
+exception
+    when dup_val_on_index then
+        dbms_output.put_line('Error: Duplicate roll number not allowed.');
+    when others then
+        dbms_output.put_line('Unexpected error occurred.');
+end;
+/
+select * from student;

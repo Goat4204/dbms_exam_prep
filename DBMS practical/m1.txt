@@ -1,0 +1,81 @@
+create database bankdb1;
+use bankdb1;
+create table branch (
+    branch_name varchar(50) primary key,
+    branch_city varchar(50) not null,
+    assets int not null
+);
+create table account (
+    acc_no int primary key,
+    branch_name varchar(50),
+    balance int not null,
+    foreign key (branch_name) references branch(branch_name)
+);
+create table customer (
+    cust_name varchar(50) primary key,
+    cust_street varchar(50) not null,
+    cust_city varchar(50) not null
+);
+create table depositor (
+    cust_name varchar(50),
+    acc_no int,
+    primary key (cust_name, acc_no),
+    foreign key (cust_name) references customer(cust_name),
+    foreign key (acc_no) references account(acc_no)
+);
+create table loan (
+    loan_no int primary key,
+    branch_name varchar(50),
+    amount int not null,
+    foreign key (branch_name) references branch(branch_name)
+);
+create table borrower (
+    cust_name varchar(50),
+    loan_no int,
+    primary key (cust_name, loan_no),
+    foreign key (cust_name) references customer(cust_name),
+    foreign key (loan_no) references loan(loan_no)
+);
+insert into branch values
+('Wadia College', 'Pune', 900000),
+('Camp', 'Pune', 800000),
+('FC Road', 'Mumbai', 700000);
+insert into account values
+(101, 'Wadia College', 20000),
+(102, 'Camp', 25000),
+(103, 'FC Road', 30000);
+insert into customer values
+('Amit', 'MG Road', 'Pune'),
+('Pooja', 'Deccan', 'Mumbai'),
+('Rohit', 'Station Road', 'Pune'),
+('Priya', 'Karve Road', 'Mumbai');
+insert into depositor values
+('Amit', 101),
+('Pooja', 102),
+('Priya', 103);
+insert into loan values
+(201, 'Wadia College', 15000),
+(202, 'Camp', 12000),
+(203, 'FC Road', 18000);
+insert into borrower values
+('Amit', 201),
+('Rohit', 202),
+('Priya', 203);
+-- 1
+select distinct branch_name from loan;
+-- 2
+select loan_no from loan where branch_name='Wadia College' and amount>12000;
+-- 3
+select c.cust_name, l.loan_no, l.amount
+from customer c
+join borrower b on c.cust_name=b.cust_name
+join loan l on b.loan_no=l.loan_no;
+-- 4
+select c.cust_name
+from customer c
+join borrower b on c.cust_name=b.cust_name
+join loan l on b.loan_no=l.loan_no
+where l.branch_name='Wadia College'
+order by c.cust_name asc;
+-- 5
+select distinct branch_city from branch;

@@ -1,0 +1,69 @@
+create database companydb14;
+use companydb14;
+create table department (
+    dept_id int primary key,
+    dept_name varchar(50),
+    location varchar(50)
+);
+create table employee (
+    emp_id int primary key,
+    emp_name varchar(50),
+    dept_id int,
+    salary int,
+    foreign key (dept_id) references department(dept_id)
+);
+create table project (
+    proj_id int primary key,
+    proj_name varchar(50),
+    dept_id int,
+    foreign key (dept_id) references department(dept_id)
+);
+insert into department (dept_id, dept_name, location) values
+(1, 'HR', 'Pune'),
+(2, 'IT', 'Mumbai'),
+(3, 'Finance', 'Bangalore');
+insert into employee (emp_id, emp_name, dept_id, salary) values
+(101, 'Amit', 1, 30000),
+(102, 'Pooja', 2, 45000),
+(103, 'Rohit', 2, 40000),
+(104, 'Priya', 3, 50000),
+(105, 'Nikita', 1, 25000);
+insert into project (proj_id, proj_name, dept_id) values
+(201, 'Recruitment System', 1),
+(202, 'Website Upgrade', 2),
+(203, 'Payroll Automation', 3),
+(204, 'Mobile App', 2);
+select e.emp_name, d.dept_name
+from employee e
+inner join department d on e.dept_id = d.dept_id;
+select d.dept_name, e.emp_name
+from department d
+left join employee e on d.dept_id = e.dept_id;
+select p.proj_name, d.dept_name
+from project p
+right join department d on p.dept_id = d.dept_id;
+select emp_name, salary
+from employee
+where salary > (select avg(salary) from employee);
+select emp_name
+from employee
+where dept_id = (select dept_id from department where dept_name = 'IT');
+select d.dept_name, avg(e.salary) as avg_salary
+from department d
+join employee e on d.dept_id = e.dept_id
+group by d.dept_name
+order by avg_salary desc
+limit 1;
+select emp_name
+from employee
+where dept_id not in (select dept_id from project);
+select d.dept_name, sum(e.salary) as total_salary
+from department d
+join employee e on d.dept_id = e.dept_id
+group by d.dept_name;
+select proj_name
+from project
+where dept_id = (select dept_id from department where dept_name = 'IT');
+select emp_name, salary
+from employee
+where salary > all (select salary from employee where dept_id = 1);

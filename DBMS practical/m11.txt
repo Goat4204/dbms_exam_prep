@@ -1,0 +1,27 @@
+// ================================
+// CREATE & INSERT DOCUMENTS (each document in one line)
+// ================================
+
+db.employee.insertMany([{ Name: { FName: "Rohan", LName: "Patil" }, Company_name: "Infosys", Salary: 55000, Designation: "Programmer", Age: 28, Expertise: ["Python", "MongoDB", "MySQL"], DOB:ISODate("1997-06-15"), Email_id: "rohan.patil@infosys.com", Contact: "9876543210", Address: [{ PAddr: "Pune", LAddr: "Mumbai" }] },{ Name: { FName: "Sneha", LName: "Joshi" }, Company_name: "TCS", Salary: 38000, Designation: "Tester", Age: 25, Expertise: ["Selenium", "MySQL", "Manual Testing"], DOB: ISODate("2000-03-12"), Email_id: "sneha.joshi@tcs.com", Contact: "9823456789", Address: [{ PAddr: "Nashik", LAddr: "Pune" }] },{ Name: { FName: "Amit", LName: "Sharma" }, Company_name: "Infosys", Salary: 60000, Designation: "Developer", Age: 30, Expertise: ["Java", "Spring Boot", "MongoDB"], DOB: ISODate("1995-01-20"), Email_id: "amit.sharma@infosys.com", Contact: "9812345678", Address: [{ PAddr: "Nagpur", LAddr: "Pune" }] },{ Name: { FName: "Priya", LName: "Deshmukh" }, Company_name: "TCS", Salary: 65000, Designation: "Analyst", Age: 27, Expertise: ["MongoDB", "MySQL", "Cassandra"], DOB: ISODate("1999-07-18"), Email_id: "priya.deshmukh@tcs.com", Contact: "9765432109", Address: [{ PAddr: "Kolhapur", LAddr: "Pune" }] },{ Name: { FName: "Rahul", LName: "Kadam" },Company_name: "Wipro", Salary: 42000, Designation: "Programmer", Age: 26, Expertise: ["Python", "Excel", "Power BI"], DOB: ISODate("1998-09-10"), Email_id: "rahul.kadam@wipro.com", Contact:"9856789012", Address: [{ PAddr: "Satara", LAddr: "Mumbai" }]}]);
+
+// ================================
+// QUERIES
+// ================================
+
+// 1️⃣ Find Name of Employees where age < 30 and salary > 50000
+db.employee.find({ Age: { $lt: 30 }, Salary: { $gt: 50000 } }, { _id: 0, "Name.FName": 1, "Name.LName": 1 });
+
+// 2️⃣ Insert document if not exists -> {Designation: "Tester", Company_name: "TCS", Age: 25}
+db.employee.updateOne({ Designation: "Tester", Company_name: "TCS", Age: 25 }, { $setOnInsert: { Name: { FName: "New", LName: "Tester" }, Salary: 35000, Expertise: ["Manual Testing", "SQL"], DOB: ISODate("2000-05-01"), Email_id:"new.tester@tcs.com", Contact: "9999999999", Address: [{ PAddr: "Pune", LAddr: "Pune" }] } }, { upsert: true });
+
+// 3️⃣ Select where age < 30 OR salary > 40000
+db.employee.find({ $or: [ { Age: { $lt: 30 } }, { Salary: { $gt: 40000 } } ] });
+
+// 4️⃣ Find where Designation is not equal to "Developer"
+db.employee.find({ Designation: { $ne: "Developer" } });
+
+// 5️⃣ Find _id, Designation, Address, and Name for Company_name = "Infosys"
+db.employee.find({ Company_name: "Infosys" }, { Designation: 1, Address: 1, Name: 1 });
+
+// 6️⃣ Display only FName and LName of all Employees
+db.employee.find({}, { _id: 0, "Name.FName": 1, "Name.LName": 1 });

@@ -1,0 +1,32 @@
+use collegeDB
+db.student.insertMany([
+  { _id: 1, name: "Amit", city: "Pune", marks: 85, dept: "Computer" },
+  { _id: 2, name: "Pooja", city: "Mumbai", marks: 45, dept: "IT" },
+  { _id: 3, name: "Rohit", city: "Pune", marks: 65, dept: "Mechanical" },
+  { _id: 4, name: "Priya", city: "Nashik", marks: 30, dept: "Civil" },
+  { _id: 5, name: "Nikita", city: "Pune", marks: 90, dept: "Computer" }
+])
+db.student.find()
+db.student.find({ city: "Pune" })
+db.student.find({ marks: { $gt: 60 } })
+db.student.updateMany(
+  { city: "Pune" },
+  { $inc: { marks: 10 } }
+)
+db.student.deleteMany({ marks: { $lt: 40 } })
+db.student.find().sort({ marks: -1 })
+db.student.aggregate([
+  { $group: { _id: "$dept", avgMarks: { $avg: "$marks" } } }
+])
+db.student.countDocuments()
+db.employee.insertMany([
+  { emp_id: 101, name: "Raj", dept: "HR", salary: 35000 },
+  { emp_id: 102, name: "Sneha", dept: "Finance", salary: 45000 },
+  { emp_id: 103, name: "Krish", dept: "IT", salary: 55000 }
+])
+db.employee.find()
+db.employee.updateMany({ dept: "IT" }, { $inc: { salary: 5000 } })
+db.employee.deleteMany({ salary: { $lt: 40000 } })
+db.employee.find().sort({ name: 1 })
+db.employee.drop()
+db.dropDatabase()

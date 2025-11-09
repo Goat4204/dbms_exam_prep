@@ -1,0 +1,153 @@
+create database companies;
+use companies;
+-- ==========================================
+--  Create Tables
+-- ==========================================
+CREATE TABLE Companies (
+    comp_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    cost DECIMAL(10,2),
+    year INT
+);
+
+CREATE TABLE Orders (
+    comp_id INT,
+    domain VARCHAR(50),
+    quantity INT
+);
+
+-- ==========================================
+--  Insert Sample Data
+-- ==========================================
+INSERT INTO Companies VALUES 
+(1, 'TechCorp', 25000.00, 2020),
+(2, 'Innova', 18000.00, 2021),
+(3, 'WebSolutions', 30000.00, 2022),
+(4, 'SoftPro', 22000.00, 2023);
+
+INSERT INTO Orders VALUES 
+(1, 'AI', 50),
+(2, 'Cloud', 75),
+(3, 'Web', 100),
+(5, 'Data', 60);   -- Note: comp_id=5 not in Companies (for testing RIGHT JOIN)
+
+-- ==========================================
+-- 1️⃣ INNER JOIN
+-- ==========================================
+SELECT 
+    c.name,
+    c.cost,
+    o.domain,
+    o.quantity
+FROM 
+    Companies c
+INNER JOIN 
+    Orders o
+ON 
+    c.comp_id = o.comp_id;
+
+-- ==========================================
+-- 2️⃣ LEFT OUTER JOIN
+-- ==========================================
+SELECT 
+    c.name,
+    c.cost,
+    o.domain,
+    o.quantity
+FROM 
+    Companies c
+LEFT OUTER JOIN 
+    Orders o
+ON 
+    c.comp_id = o.comp_id;
+
+-- ==========================================
+-- 3️⃣ RIGHT OUTER JOIN
+-- ==========================================
+SELECT 
+    c.name,
+    c.cost,
+    o.domain,
+    o.quantity
+FROM 
+    Companies c
+RIGHT OUTER JOIN 
+    Orders o
+ON 
+    c.comp_id = o.comp_id;
+
+-- ==========================================
+-- 4️⃣ Using UNION Operator (simulate FULL OUTER JOIN)
+-- ==========================================
+SELECT 
+    c.name,
+    c.cost,
+    o.domain,
+    o.quantity
+FROM 
+    Companies c
+LEFT JOIN 
+    Orders o
+ON 
+    c.comp_id = o.comp_id
+
+UNION
+
+SELECT 
+    c.name,
+    c.cost,
+    o.domain,
+    o.quantity
+FROM 
+    Companies c
+RIGHT JOIN 
+    Orders o
+ON 
+    c.comp_id = o.comp_id;
+
+-- ==========================================
+-- 5️⃣ Create View1 — company name & quantity
+-- ==========================================
+CREATE VIEW View1 AS
+SELECT 
+    c.name AS company_name,
+    o.quantity
+FROM 
+    Companies c
+INNER JOIN 
+    Orders o
+ON 
+    c.comp_id = o.comp_id;
+
+-- ==========================================
+-- 6️⃣ Create View2 — two columns from Companies
+-- ==========================================
+CREATE VIEW View2 AS
+SELECT 
+    comp_id,
+    name
+FROM 
+    Companies;
+
+-- ==========================================
+-- Perform INSERT, UPDATE, DELETE on View2
+-- ==========================================
+
+-- Insert
+INSERT INTO View2 (comp_id, name)
+VALUES (5, 'TechNova');
+
+-- Update
+UPDATE View2
+SET name = 'TechNova Solutions'
+WHERE comp_id = 5;
+
+-- Delete
+DELETE FROM View2
+WHERE comp_id = 5;
+
+-- ==========================================
+-- 7️⃣ Display Views
+-- ==========================================
+SELECT * FROM View1;
+SELECT * FROM View2;

@@ -1,0 +1,69 @@
+from pymongo import MongoClient
+
+# connect to MongoDB server (default port 27017)
+client = MongoClient("mongodb://localhost:27017/")
+
+# create or connect to database
+db = client["college_db"]
+
+# create or connect to collection (like a table)
+students = db["student"]
+
+# ---------- CREATE ----------
+def add_student(roll, name, city, marks):
+    record = {"roll": roll, "name": name, "city": city, "marks": marks}
+    students.insert_one(record)
+    print(f"Added student: {name}")
+
+# ---------- READ ----------
+def view_students():
+    print("\nAll Students:")
+    for s in students.find():
+        print(s)
+
+# ---------- UPDATE ----------
+def update_marks(roll, new_marks):
+    students.update_one({"roll": roll}, {"$set": {"marks": new_marks}})
+    print(f"Updated marks for roll {roll} to {new_marks}")
+
+# ---------- DELETE ----------
+def delete_student(roll):
+    students.delete_one({"roll": roll})
+    print(f"🗑️ Deleted student with roll {roll}")
+
+# ---------- MENU ----------
+while True:
+    print("\n=== MongoDB CRUD Menu ===")
+    print("1. Add Student")
+    print("2. View Students")
+    print("3. Update Marks")
+    print("4. Delete Student")
+    print("5. Exit")
+
+    choice = input("Enter choice: ")
+
+    if choice == "1":
+        roll = int(input("Enter roll: "))
+        name = input("Enter name: ")
+        city = input("Enter city: ")
+        marks = int(input("Enter marks: "))
+        add_student(roll, name, city, marks)
+
+    elif choice == "2":
+        view_students()
+
+    elif choice == "3":
+        roll = int(input("Enter roll to update: "))
+        new_marks = int(input("Enter new marks: "))
+        update_marks(roll, new_marks)
+
+    elif choice == "4":
+        roll = int(input("Enter roll to delete: "))
+        delete_student(roll)
+
+    elif choice == "5":
+        print("Exiting program...")
+        break
+
+    else:
+        print("Invalid choice, try again.")

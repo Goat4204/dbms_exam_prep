@@ -1,0 +1,78 @@
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,
+    employee_name VARCHAR(50) NOT NULL,
+    street VARCHAR(100),
+    city VARCHAR(50)
+);
+
+CREATE TABLE Company (
+    company_name VARCHAR(50) PRIMARY KEY,
+    city VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Works (
+    employee_name VARCHAR(50) NOT NULL,
+    company_name VARCHAR(50) NOT NULL,
+    salary DECIMAL(10,2) CHECK(salary >= 0),
+    FOREIGN KEY (employee_name) REFERENCES Employee(employee_name),
+    FOREIGN KEY (company_name) REFERENCES Company(company_name)
+);
+
+CREATE TABLE Manages (
+    employee_name VARCHAR(50) PRIMARY KEY,
+    manager_name VARCHAR(50),
+    FOREIGN KEY (employee_name) REFERENCES Employee(employee_name)
+);
+
+INSERT INTO Employee VALUES
+(101, 'Rahul', 'MG Road', 'Pune'),
+(102, 'Priya', 'JM Road', 'Mumbai'),
+(103, 'Amit', 'FC Road', 'Delhi'),
+(104, 'Neha', 'Shivaji Nagar', 'Pune'),
+(105, 'Rohan', 'Camp', 'Chennai');
+
+INSERT INTO Company VALUES
+('TCS', 'Pune'),
+('InfoSys', 'Hyderabad'),
+('TechM', 'Delhi');
+
+INSERT INTO Works VALUES
+('Rahul', 'TCS', 12000),
+('Priya', 'InfoSys', 9000),
+('Amit', 'TechM', 15000),
+('Neha', 'TechM', 11000),
+('Rohan', 'InfoSys', 13000);
+
+INSERT INTO Manages VALUES
+('Rahul', 'Priya'),
+('Priya', 'Amit'),
+('Amit', 'Neha'),
+('Neha', 'Rohan'),
+('Rohan', 'Rahul');
+
+UPDATE Employee
+SET city = 'Bangalore'
+WHERE employee_name IN (
+    SELECT employee_name FROM Works WHERE company_name = 'InfoSys'
+);
+
+SELECT w.employee_name, w.company_name, w.salary
+FROM Works w
+WHERE w.salary > (
+    SELECT AVG(w2.salary)
+    FROM Works w2
+    WHERE w2.company_name = w.company_name
+);
+
+SELECT e.employee_name, e.street, e.city
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'TechM' AND w.salary > 10000;
+
+ALTER TABLE Manages RENAME TO Management;
+
+CREATE INDEX idx_city ON Employee(city);
+
+CREATE UNIQUE INDEX idx_empname ON Employee(employee_name);
+
+SHOW INDEX FROM Employee;

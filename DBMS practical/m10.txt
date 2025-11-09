@@ -1,0 +1,24 @@
+// CREATE & INSERT DOCUMENTS (one per line)
+
+db.employee.insertMany([{ Name: { FName: "Rohan", LName: "Patil" }, Company_name: "Infosys", Salary: 45000, Designation: "Programmer", Age: 28, Expertise: ["Python", "MongoDB", "MySQL"], DOB: ISODate("1997-06-15"), Email_id: "rohan.patil@infosys.com", Contact: "9876543210", Address: [{ PAddr: "Pune", LAddr: "Mumbai" }]},{ Name: { FName: "Sneha", LName: "Joshi" }, Company_name: "TCS", Salary: 38000, Designation: "Tester", Age: 25, Expertise: ["Selenium", "MySQL", "Manual Testing"], DOB: ISODate("2000-03-12"), Email_id: "sneha.joshi@tcs.com", Contact: "9823456789", Address: [{ PAddr: "Nashik", LAddr: "Pune" }]},{ Name: { FName: "Amit", LName: "Sharma" }, Company_name: "Infosys", Salary: 50000, Designation: "Developer", Age: 30, Expertise: ["Java", "Spring Boot", "MongoDB"], DOB: ISODate("1995-01-20"), Email_id: "amit.sharma@infosys.com", Contact: "9812345678", Address: [{ PAddr: "Nagpur", LAddr: "Pune" }] },{ Name: { FName: "Priya", LName: "Deshmukh" }, Company_name: "TCS", Salary: 35000, Designation: "Programmer", Age: 26, Expertise: ["MongoDB", "MySQL", "Cassandra"], DOB: ISODate("1999-07-18"), Email_id: "priya.deshmukh@tcs.com", Contact: "9765432109", Address: [{ PAddr: "Kolhapur", LAddr: "Pune" }] },{ Name: { FName: "Rahul", LName: "Kadam" }, Company_name: "Wipro", Salary: 40000, Designation: "Analyst", Age: 27, Expertise: ["Python", "Excel", "Power BI"], DOB: ISODate("1998-09-10"), Email_id: "rahul.kadam@wipro.com", Contact: "9856789012", Address: [{ PAddr: "Satara", LAddr: "Mumbai" }]}]);
+
+// QUERIES (each single-line for terminal use)
+
+
+// 1️⃣ Find Programmers with salary > 30000
+db.employee.find({ Designation: "Programmer", Salary: { $gt: 30000 } }, { _id: 0, Name: 1, Company_name: 1, Salary: 1, Designation: 1 });
+
+// 2️⃣ Insert if not exists (Tester, TCS, Age 25)
+db.employee.updateOne({ Designation: "Tester", Company_name: "TCS", Age: 25 }, { $setOnInsert: { Name: { FName: "New", LName: "Tester" }, Salary: 32000, Expertise: ["Manual Testing", "SQL"], DOB: ISODate("2000-05-01"), Email_id:"new.tester@tcs.com", Contact: "9999999999", Address: [{ PAddr: "Pune", LAddr: "Pune" }] } }, { upsert: true });
+
+// 3️⃣ Increase salary by 10000 for Infosys employees
+db.employee.updateMany({ Company_name: "Infosys" }, { $inc: { Salary: 10000 } });
+
+// 4️⃣ Reduce salary by 5000 for TCS employees
+db.employee.updateMany({ Company_name: "TCS" }, { $inc: { Salary: -5000 } });
+
+// 5️⃣ Show employees whose Designation is not "Tester"
+db.employee.find({ Designation: { $ne: "Tester" } }, { _id: 0, Name: 1, Designation: 1, Company_name: 1, Salary: 1 });
+
+// 6️⃣ Exact match on Expertise array ['MongoDB','MySQL','Cassandra']
+db.employee.find({ Expertise: ["MongoDB", "MySQL", "Cassandra"] });

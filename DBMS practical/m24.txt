@@ -1,0 +1,33 @@
+
+CREATE TABLE Emp (
+  Emp_no NUMBER PRIMARY KEY,
+  Emp_name VARCHAR2(30),
+  Emp_salary NUMBER
+);
+
+CREATE TABLE Tracking (
+  Emp_no NUMBER,
+  Emp_salary NUMBER
+);
+
+-- Trigger
+CREATE OR REPLACE TRIGGER trg_salary_check
+AFTER INSERT OR UPDATE OR DELETE ON Emp
+FOR EACH ROW
+DECLARE
+BEGIN
+  IF INSERTING AND :NEW.Emp_salary < 50000 THEN
+    INSERT INTO Tracking VALUES (:NEW.Emp_no, :NEW.Emp_salary);
+    DBMS_OUTPUT.PUT_LINE('Low salary inserted: ' || :NEW.Emp_salary);
+  ELSIF UPDATING AND :NEW.Emp_salary < 50000 THEN
+    INSERT INTO Tracking VALUES (:NEW.Emp_no, :NEW.Emp_salary);
+    DBMS_OUTPUT.PUT_LINE('Low salary updated: ' || :NEW.Emp_salary);
+  END IF;
+END;
+/
+
+-- Test
+INSERT INTO Emp VALUES (1,'Ravi',45000);
+UPDATE Emp SET Emp_salary = 48000 WHERE Emp_no = 1;
+
+SELECT * FROM Tracking;

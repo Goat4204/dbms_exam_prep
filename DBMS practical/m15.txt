@@ -1,0 +1,25 @@
+-- Create the table to store results
+CREATE TABLE areas (
+    radius NUMBER(5,2),
+    area   NUMBER(10,2)
+);
+
+-- PL/SQL block to calculate and insert areas
+DECLARE
+    v_radius NUMBER(5,2);
+    v_area   NUMBER(10,2);
+BEGIN
+    -- Loop through radius values from 5 to 9
+    FOR v_radius IN 5..9 LOOP
+        v_area := 3.14159 * v_radius * v_radius;  -- Area = πr²
+        
+        INSERT INTO areas (radius, area)
+        VALUES (v_radius, v_area);
+    END LOOP;
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Areas calculated and stored successfully.');
+END;
+/
+select * from areas;

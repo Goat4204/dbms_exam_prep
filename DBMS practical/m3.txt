@@ -1,0 +1,98 @@
+create database bankdb;
+use bankdb;
+create table branch (
+    branch_name varchar(50) primary key,
+    branch_city varchar(50) not null,
+    assets int not null
+);
+create table account (
+    acc_no int primary key,
+    branch_name varchar(50),
+    balance int not null,
+    foreign key (branch_name) references branch(branch_name)
+);
+create table customer (
+    cust_name varchar(50) primary key,
+    cust_street varchar(50) not null,
+    cust_city varchar(50) not null
+);
+create table depositor (
+    cust_name varchar(50),
+    acc_no int,
+    primary key (cust_name, acc_no),
+    foreign key (cust_name) references customer(cust_name),
+    foreign key (acc_no) references account(acc_no)
+);
+create table loan (
+    loan_no int primary key,
+    branch_name varchar(50),
+    amount int not null,
+    foreign key (branch_name) references branch(branch_name)
+);
+create table borrower (
+    cust_name varchar(50),
+    loan_no int,
+    primary key (cust_name, loan_no),
+    foreign key (cust_name) references customer(cust_name),
+    foreign key (loan_no) references loan(loan_no)
+);
+insert into branch values
+('Wadia College', 'Pune', 900000),
+('Camp', 'Pune', 800000),
+('FC Road', 'Mumbai', 700000),
+('MG Road', 'Nashik', 600000);
+insert into account values
+(101, 'Wadia College', 20000),
+(102, 'Camp', 10000),
+(103, 'FC Road', 30000),
+(104, 'MG Road', 16000),
+(105, 'Wadia College', 25000);
+insert into customer values
+('Amit', 'MG Road', 'Pune'),
+('Pooja', 'Deccan', 'Mumbai'),
+('Rohit', 'Station Road', 'Nashik'),
+('Priya', 'Karve Road', 'Pune'),
+('Nikita', 'Laxmi Road', 'Mumbai'),
+('Pratik', 'Tilak Road', 'Pune');
+insert into depositor values
+('Amit', 101),
+('Pooja', 102),
+('Rohit', 103),
+('Priya', 104),
+('Nikita', 105);
+insert into loan values
+(201, 'Wadia College', 15000),
+(202, 'Camp', 12000),
+(203, 'FC Road', 18000),
+(204, 'MG Road', 1400),
+(205, 'Camp', 1300);
+insert into borrower values
+('Amit', 201),
+('Pooja', 202),
+('Rohit', 203),
+('Priya', 204),
+('Nikita', 205);
+-- 1
+select branch_name
+from account
+group by branch_name
+having avg(balance) > 15000;
+-- 2
+select count(*) as total_customers from customer;
+-- 3
+select sum(amount) as total_loan_amount from loan;
+-- 5
+select branch_name, avg(balance) as avg_balance
+from account
+group by branch_name;
+-- 6
+select cust_name, cust_city
+from customer
+where cust_name like 'P%';
+-- 4
+DELETE FROM borrower
+WHERE loan_no IN (
+  SELECT loan_no FROM loan WHERE amount BETWEEN 1300 AND 1500
+);
+DELETE FROM loan
+WHERE amount BETWEEN 1300 AND 1500;

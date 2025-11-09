@@ -1,0 +1,34 @@
+
+
+CREATE TABLE Stud (
+  Roll NUMBER PRIMARY KEY,
+  Name VARCHAR2(30),
+  Attendance NUMBER,
+  Status VARCHAR2(20)
+);
+
+INSERT INTO Stud VALUES (1,'Ravi',80,NULL);
+INSERT INTO Stud VALUES (2,'Sneha',70,NULL);
+COMMIT;
+
+-- PL/SQL Block
+DECLARE
+  v_roll Stud.Roll%TYPE := &Roll;
+  v_att Stud.Attendance%TYPE;
+BEGIN
+  SELECT Attendance INTO v_att FROM Stud WHERE Roll = v_roll;
+
+  IF v_att < 75 THEN
+    DBMS_OUTPUT.PUT_LINE('Term not granted');
+    UPDATE Stud SET Status = 'Detained' WHERE Roll = v_roll;
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Term granted');
+    UPDATE Stud SET Status = 'Not Detained' WHERE Roll = v_roll;
+  END IF;
+
+  COMMIT;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Roll number not found');
+END;
+/

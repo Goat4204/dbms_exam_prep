@@ -1,0 +1,51 @@
+CREATE TABLE emp (
+  emp_no NUMBER PRIMARY KEY,
+  salary NUMBER(10,2)
+);
+
+CREATE TABLE increment_salary (
+  emp_no NUMBER,
+  salary NUMBER(10,2)
+);
+
+INSERT INTO emp VALUES (101, 25000);
+INSERT INTO emp VALUES (102, 40000);
+INSERT INTO emp VALUES (103, 35000);
+INSERT INTO emp VALUES (104, 60000);
+INSERT INTO emp VALUES (105, 28000);
+COMMIT;
+
+DECLARE
+  v_avg_salary emp.salary%TYPE;
+BEGIN
+  -- Step 1: Calculate the average salary of organization
+  SELECT AVG(salary) INTO v_avg_salary FROM emp;
+
+  DBMS_OUTPUT.PUT_LINE('Average Salary: ' || v_avg_salary);
+
+  -- Step 2: Loop through employees having salary less than average
+  FOR rec IN (SELECT emp_no, salary FROM emp WHERE salary < v_avg_salary) LOOP
+    
+    -- Step 3: Increase salary by 10%
+    UPDATE emp
+    SET salary = salary + (salary * 0.10)
+    WHERE emp_no = rec.emp_no;
+
+    -- Step 4: Insert the updated record into increment_salary table
+    INSERT INTO increment_salary (emp_no, salary)
+    VALUES (rec.emp_no, rec.salary + (rec.salary * 0.10));
+
+    DBMS_OUTPUT.PUT_LINE('Salary updated for Emp No: ' || rec.emp_no);
+  END LOOP;
+
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('Salary increment process completed successfully.');
+
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No employee data found.');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Unexpected Error: ' || SQLERRM);
+END;
+/
+

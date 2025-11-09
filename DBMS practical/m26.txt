@@ -1,0 +1,85 @@
+import mysql.connector
+
+# connect to MySQL server
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",        # replace with your MySQL username
+    password="root",    # replace with your MySQL password
+    database="college_db"  # ensure this DB exists
+)
+
+cursor = conn.cursor()
+
+# create table if not exists
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS student (
+    roll INT PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50),
+    marks INT
+)
+""")
+
+# ---------- ADD ----------
+def add_student():
+    roll = int(input("Enter Roll No: "))
+    name = input("Enter Name: ")
+    city = input("Enter City: ")
+    marks = int(input("Enter Marks: "))
+    sql = "INSERT INTO student (roll, name, city, marks) VALUES (%s, %s, %s, %s)"
+    val = (roll, name, city, marks)
+    cursor.execute(sql, val)
+    conn.commit()
+    print("Student Added Successfully!")
+
+# ---------- VIEW ----------
+def view_students():
+    cursor.execute("SELECT * FROM student")
+    rows = cursor.fetchall()
+    print("\nStudent Records:")
+    for r in rows:
+        print(r)
+
+# ---------- UPDATE ----------
+def update_student():
+    roll = int(input("Enter Roll No to Edit: "))
+    new_marks = int(input("Enter New Marks: "))
+    sql = "UPDATE student SET marks = %s WHERE roll = %s"
+    val = (new_marks, roll)
+    cursor.execute(sql, val)
+    conn.commit()
+    print("Student Record Updated!")
+
+# ---------- DELETE ----------
+def delete_student():
+    roll = int(input("Enter Roll No to Delete: "))
+    sql = "DELETE FROM student WHERE roll = %s"
+    val = (roll,)
+    cursor.execute(sql, val)
+    conn.commit()
+    print("Student Deleted Successfully!")
+
+# ---------- MENU ----------
+while True:
+    print("\n=== MySQL CRUD MENU ===")
+    print("1. Add Student")
+    print("2. View Students")
+    print("3. Update Student")
+    print("4. Delete Student")
+    print("5. Exit")
+
+    ch = input("Enter choice: ")
+
+    if ch == "1":
+        add_student()
+    elif ch == "2":
+        view_students()
+    elif ch == "3":
+        update_student()
+    elif ch == "4":
+        delete_student()
+    elif ch == "5":
+        print("Exiting Program...")
+        break
+    else:
+        print("Invalid Choice, Try Again.")

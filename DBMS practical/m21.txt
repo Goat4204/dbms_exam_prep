@@ -1,0 +1,25 @@
+SET SERVEROUTPUT ON;
+-- Function
+CREATE OR REPLACE FUNCTION Age_calc(
+  dob IN DATE,
+  months OUT NUMBER,
+  days OUT NUMBER
+) RETURN NUMBER IS
+  v_years NUMBER;
+  v_temp DATE := SYSDATE;
+BEGIN
+  v_years := FLOOR(MONTHS_BETWEEN(v_temp, dob) / 12);
+  months := FLOOR(MOD(MONTHS_BETWEEN(v_temp, dob), 12));
+  days := v_temp - ADD_MONTHS(dob, v_years * 12 + months);
+  RETURN v_years;
+END;
+/
+
+-- Test the function
+DECLARE
+  y NUMBER; m NUMBER; d NUMBER;
+BEGIN
+  y := Age_calc(DATE '2000-05-10', m, d);
+  DBMS_OUTPUT.PUT_LINE('Age: ' || y || ' years, ' || m || ' months, ' || d || ' days');
+END;
+/

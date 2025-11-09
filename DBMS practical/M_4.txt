@@ -1,0 +1,90 @@
+create database orderdb;
+use orderdb;
+create table cust_master (
+    cust_no varchar(10) primary key,
+    cust_name varchar(50),
+    cust_addr varchar(50)
+);
+create table order_table (
+    order_no varchar(10) primary key,
+    cust_no varchar(10),
+    order_date varchar(20),
+    qty_ordered int,
+    foreign key (cust_no) references cust_master(cust_no)
+);
+create table product (
+    product_no varchar(10) primary key,
+    product_name varchar(50),
+    order_no varchar(10),
+    foreign key (order_no) references order_table(order_no)
+);
+insert into cust_master (cust_no, cust_name, cust_addr) values
+('C1001', 'Amit', 'Pune'),
+('C1002', 'Anita', 'Banglore'),
+('C1003', 'Maya', 'Manglore'),
+('C1004', 'Rohit', 'Pune'),
+('C1005', 'Nikhil', 'Mumbai'),
+('C1006', 'Pooja', 'Pune'),
+('C1007', 'Payal', 'Banglore'),
+('C1008', 'Pravin', 'Manglore');
+insert into order_table (order_no, cust_no, order_date, qty_ordered) values
+('O2001', 'C1001', '2025-01-10', 10),
+('O2002', 'C1002', '2025-02-05', 5),
+('O2003', 'C1003', '2025-03-15', 8),
+('O2004', 'C1004', '2025-04-20', 12),
+('O2005', 'C1005', '2025-05-25', 7),
+('O2006', 'C1007', '2025-06-01', 9),
+('O2007', 'C1008', '2025-07-12', 6);
+insert into product (product_no, product_name, order_no) values
+('P3001', 'Laptop', 'O2001'),
+('P3002', 'Mouse', 'O2002'),
+('P3003', 'Keyboard', 'O2003'),
+('P3004', 'Monitor', 'O2004'),
+('P3005', 'Cpu', 'O2005'),
+('P3006', 'Speaker', 'O2006'),
+('P3007', 'Tablet', 'O2007');
+-- 1. list names of customers having 'a' as second letter in their name
+select cust_name
+from cust_master
+where cust_name like '_a%';
+-- 2. display order from customer no c1002, c1005, c1007 and c1008
+select * 
+from order_table
+where cust_no in ('C1002', 'C1005', 'C1007', 'C1008');
+-- 3. list clients who stay in either 'banglore' or 'manglore'
+select * 
+from cust_master
+where cust_addr in ('Banglore', 'Manglore');
+-- 4. display name of customers and the product_name they have purchased
+select c.cust_name, p.product_name
+from cust_master c
+join order_table o on c.cust_no = o.cust_no
+join product p on o.order_no = p.order_no;
+-- 5. create view view1 consisting of cust_name and product_name
+create view view1 as
+select c.cust_name, p.product_name
+from cust_master c
+join order_table o on c.cust_no = o.cust_no
+join product p on o.order_no = p.order_no;
+select * from view1;
+-- 6. display product_name and quantity purchased by each customer
+select c.cust_name, p.product_name, o.qty_ordered
+from cust_master c
+join order_table o on c.cust_no = o.cust_no
+join product p on o.order_no = p.order_no;
+-- 7. perform different join operations
+-- inner join
+select c.cust_name, o.order_no, p.product_name
+from cust_master c
+inner join order_table o on c.cust_no = o.cust_no
+inner join product p on o.order_no = p.order_no;
+-- left join
+select c.cust_name, p.product_name
+from cust_master c
+left join order_table o on c.cust_no = o.cust_no
+left join product p on o.order_no = p.order_no;
+-- right join
+select c.cust_name, p.product_name
+from cust_master c
+right join order_table o on c.cust_no = o.cust_no
+right join product p on o.order_no = p.order_no;
